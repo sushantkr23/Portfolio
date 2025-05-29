@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sushant Kumar - Portfolio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
     <style>
         :root {
             --primary-color: #8e2de2;
@@ -26,7 +28,6 @@
         }
 
         body {
-            background-color: var(--dark-bg);
             color: var(--text-color);
             line-height: 1.6;
             overflow-x: hidden;
@@ -34,41 +35,13 @@
         }
 
         /* 3D Background Animation */
-        .background-shapes {
+        #vanta-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
-            overflow: hidden;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.1;
-            transition: var(--transition);
-            animation-duration: 20s;
-            animation-iteration-count: infinite;
-            animation-timing-function: ease-in-out;
-        }
-
-        .circle {
-            border-radius: 50%;
-            background: var(--primary-color);
-        }
-
-        .triangle {
-            width: 0;
-            height: 0;
-            border-left: 50px solid transparent;
-            border-right: 50px solid transparent;
-            border-bottom: 100px solid var(--secondary-color);
-            background: transparent;
-        }
-
-        .square {
-            background: var(--primary-color);
         }
 
         .container {
@@ -168,6 +141,8 @@
         main {
             padding-top: 100px;
             min-height: 100vh;
+            position: relative;
+            z-index: 1;
         }
 
         section {
@@ -181,6 +156,20 @@
             margin-bottom: 50px;
             font-size: 2.5rem;
             color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
         }
 
         /* Home Section */
@@ -263,6 +252,7 @@
         .hero-image {
             flex: 1;
             text-align: center;
+            position: relative;
         }
 
         .hero-image img {
@@ -270,6 +260,12 @@
             border-radius: 20px;
             box-shadow: var(--shadow);
             border: 3px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .hero-image:hover img {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(142, 45, 226, 0.4);
         }
 
         /* Projects Section */
@@ -297,6 +293,11 @@
             width: 100%;
             height: 200px;
             object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.05);
         }
 
         .project-info {
@@ -334,90 +335,126 @@
         }
 
         /* Skills Section Styles */
-        .skill-category {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .skill-category h3 {
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            text-align: center;
-        }
-
-        .skills-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .skill-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-width: 80px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-
-        .skill-item:hover {
-            transform: translateY(-5px);
-            background: rgba(142, 45, 226, 0.1);
-        }
-
-        .skill-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .skill-item span {
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .skills-row {
-                gap: 15px;
+            .skill-category {
+                margin-bottom: 40px;
             }
-            
+
+            .skill-category h3 {
+                margin-bottom: 20px;
+                color: var(--primary-color);
+                font-size: 1.5rem;
+                text-align: center;
+                position: relative;
+                padding-bottom: 10px;
+            }
+
+            .skill-category h3::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 2px;
+                background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            }
+
+            .skills-container {
+                display: flex;
+                gap: 20px;
+                overflow-x: auto;
+                padding: 20px 10px;
+                scrollbar-width: thin;
+                scrollbar-color: var(--primary-color) var(--darker-bg);
+            }
+
+            .skills-container::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .skills-container::-webkit-scrollbar-track {
+                background: var(--darker-bg);
+                border-radius: 10px;
+            }
+
+            .skills-container::-webkit-scrollbar-thumb {
+                background-color: var(--primary-color);
+                border-radius: 10px;
+            }
+
             .skill-item {
-                min-width: 70px;
-                padding: 10px;
+                min-width: 200px;
+                background: var(--card-bg);
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: var(--shadow);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: var(--transition);
+                flex-shrink: 0;
             }
-            
+
+            .skill-item:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(142, 45, 226, 0.3);
+            }
+
+            .skill-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
             .skill-icon {
                 font-size: 1.8rem;
+                margin-right: 15px;
+                color: var(--primary-color);
             }
-        }
 
-        @media (max-width: 480px) {
-            .skills-row {
-                gap: 10px;
+            .skill-name {
+                font-weight: 500;
+                font-size: 1.1rem;
             }
-            
-            .skill-item {
-                min-width: 60px;
-                padding: 8px;
+
+            .progress-container {
+                width: 100%;
+                height: 8px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+                overflow: hidden;
             }
-            
-            .skill-icon {
-                font-size: 1.5rem;
+
+            .progress-bar {
+                height: 100%;
+                background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+                border-radius: 4px;
+                position: relative;
+                transition: width 1.5s ease;
             }
-            
-            .skill-item span {
-                font-size: 0.8rem;
+
+            .progress-percent {
+                position: absolute;
+                right: 5px;
+                top: -20px;
+                font-size: 0.7rem;
+                color: var(--text-secondary);
             }
-        }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .skill-item {
+                    min-width: 180px;
+                    padding: 15px;
+                }
+                
+                .skill-icon {
+                    font-size: 1.5rem;
+                }
+                
+                .skill-name {
+                    font-size: 1rem;
+                }
+            }
+
         /* Contact Section */
         .contact-container {
             display: grid;
@@ -435,11 +472,24 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .contact-method:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
         }
 
         .contact-icon {
             font-size: 1.5rem;
             color: var(--primary-color);
+        }
+
+        .contact-details h3 {
+            margin-bottom: 5px;
         }
 
         .contact-form {
@@ -494,6 +544,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            justify-content: center;
         }
 
         .submit-button:hover {
@@ -509,11 +561,20 @@
             align-items: center;
         }
 
+        .about-image {
+            position: relative;
+        }
+
         .about-image img {
             max-width: 100%;
             border-radius: 10px;
             box-shadow: var(--shadow);
             border: 3px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .about-image:hover img {
+            transform: scale(1.03);
         }
 
         .about-content {
@@ -547,7 +608,7 @@
 
         .social-link:hover {
             background: var(--secondary-color);
-            transform: translateY(-3px);
+            transform: translateY(-3px) scale(1.1);
         }
 
         /* Footer */
@@ -557,6 +618,8 @@
             padding: 30px 0;
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
         }
 
         .footer-content {
@@ -610,6 +673,29 @@
 
         .back-to-top:hover {
             background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .notification.show {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* Responsive Styles */
@@ -698,7 +784,10 @@
 </head>
 <body>
     <!-- 3D Background Animation -->
-    <div class="background-shapes" id="background-shapes"></div>
+    <div id="vanta-bg"></div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
 
     <!-- Header -->
     <header>
@@ -757,7 +846,7 @@
                 <div class="projects-grid">
                     <!-- Project 1 -->
                     <div class="project-card">
-                        <img src="https://via.placeholder.com/400x300" alt="Project 1" class="project-image">
+                        <img src="data:image/jpeg;base64,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" alt="Project 1" class="project-image">
                         <div class="project-info">
                             <h3 class="project-title">E-commerce Website</h3>
                             <p class="project-description">
@@ -772,7 +861,7 @@
                     
                     <!-- Project 2 -->
                     <div class="project-card">
-                        <img src="https://via.placeholder.com/400x300" alt="Project 2" class="project-image">
+                        <img src="https://img.freepik.com/free-vector/task-management-app-interface_23-2148681556.jpg" alt="Project 2" class="project-image">
                         <div class="project-info">
                             <h3 class="project-title">Task Management App</h3>
                             <p class="project-description">
@@ -787,7 +876,7 @@
                     
                     <!-- Project 3 -->
                     <div class="project-card">
-                        <img src="https://via.placeholder.com/400x300" alt="Project 3" class="project-image">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRu7b5SKy9C1BXyt0atYIpwwXBhv_vECE5Kkw&s" alt="Project 3" class="project-image">
                         <div class="project-info">
                             <h3 class="project-title">Weather Dashboard</h3>
                             <p class="project-description">
@@ -803,57 +892,115 @@
             </div>
         </section>
 
-       <!-- Skills Section -->
+                <!-- Skills Section -->
         <section id="skills" class="section">
             <div class="container">
                 <h2 class="section-title">My Skills</h2>
                 
                 <!-- Frontend Skills -->
                 <div class="skill-category">
-                    <h3>Frontend</h3>
-                    <div class="skills-row">
-                        <div class="skill-item">
-                            <i class="fab fa-html5 skill-icon"></i>
-                            <span>HTML</span>
+                    <h3>Frontend Development</h3>
+                    <div class="skills-container" style="display: flex; overflow-x: auto; gap: 20px; padding-bottom: 20px;">
+                        <div class="skill-item" data-percent="95" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fab fa-html5 skill-icon"></i>
+                                <span class="skill-name">HTML5</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">95%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fab fa-css3-alt skill-icon"></i>
-                            <span>CSS</span>
+                        
+                        <div class="skill-item" data-percent="90" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fab fa-css3-alt skill-icon"></i>
+                                <span class="skill-name">CSS3</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">90%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fab fa-js skill-icon"></i>
-                            <span>JavaScript</span>
+                        
+                        <div class="skill-item" data-percent="85" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fab fa-js skill-icon"></i>
+                                <span class="skill-name">JavaScript</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">85%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fab fa-react skill-icon"></i>
-                            <span>React</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-vuejs skill-icon"></i>
-                            <span>Vue.js</span>
+                        
+                        <div class="skill-item" data-percent="80" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fab fa-react skill-icon"></i>
+                                <span class="skill-name">React</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">80%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Backend Skills -->
                 <div class="skill-category">
-                    <h3>Backend</h3>
-                    <div class="skills-row">
-                        <div class="skill-item">
-                            <i class="fab fa-node-js skill-icon"></i>
-                            <span>Node.js</span>
+                    <h3>Backend Development</h3>
+                    <div class="skills-container" style="display: flex; overflow-x: auto; gap: 20px; padding-bottom: 20px;">
+                        <div class="skill-item" data-percent="75" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fab fa-node-js skill-icon"></i>
+                                <span class="skill-name">Node.js</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">75%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-database skill-icon"></i>
-                            <span>MongoDB</span>
+                        
+                        <div class="skill-item" data-percent="70" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fas fa-database skill-icon"></i>
+                                <span class="skill-name">MongoDB</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">70%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-server skill-icon"></i>
-                            <span>Express</span>
+                        
+                        <div class="skill-item" data-percent="65" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fas fa-server skill-icon"></i>
+                                <span class="skill-name">Express</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">65%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-fire skill-icon"></i>
-                            <span>Firebase</span>
+                        
+                        <div class="skill-item" data-percent="60" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fas fa-fire skill-icon"></i>
+                                <span class="skill-name">Firebase</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">60%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -861,28 +1008,58 @@
                 <!-- Tools & Other -->
                 <div class="skill-category">
                     <h3>Tools & Other</h3>
-                    <div class="skills-row">
-                        <div class="skill-item">
-                            <i class="fab fa-git-alt skill-icon"></i>
-                            <span>Git</span>
+                    <div class="skills-container" style="display: flex; overflow-x: auto; gap: 20px; padding-bottom: 20px;">
+                        <div class="skill-item" data-percent="85" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fab fa-git-alt skill-icon"></i>
+                                <span class="skill-name">Git</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">85%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fab fa-github skill-icon"></i>
-                            <span>GitHub</span>
+                        
+                        <div class="skill-item" data-percent="80" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fab fa-github skill-icon"></i>
+                                <span class="skill-name">GitHub</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">80%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-terminal skill-icon"></i>
-                            <span>CLI</span>
+                        
+                        <div class="skill-item" data-percent="75" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fas fa-terminal skill-icon"></i>
+                                <span class="skill-name">CLI</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">75%</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="skill-item">
-                            <i class="fas fa-mobile-alt skill-icon"></i>
-                            <span>Responsive Design</span>
+                        
+                        <div class="skill-item" data-percent="90" style="min-width: 200px;">
+                            <div class="skill-header">
+                                <i class="fas fa-mobile-alt skill-icon"></i>
+                                <span class="skill-name">Responsive Design</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <span class="progress-percent">90%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
         <!-- Contact Section -->
         <section id="contact" class="section">
             <div class="container">
@@ -891,7 +1068,7 @@
                     <div class="contact-info">
                         <div class="contact-method">
                             <i class="fas fa-envelope contact-icon"></i>
-                            <div>
+                            <div class="contact-details">
                                 <h3>Email</h3>
                                 <p>sushantdehri6@gmail.com</p>
                             </div>
@@ -899,7 +1076,7 @@
                         
                         <div class="contact-method">
                             <i class="fas fa-phone contact-icon"></i>
-                            <div>
+                            <div class="contact-details">
                                 <h3>Phone</h3>
                                 <p>+91 8271660385</p>
                             </div>
@@ -907,7 +1084,7 @@
                         
                         <div class="contact-method">
                             <i class="fas fa-map-marker-alt contact-icon"></i>
-                            <div>
+                            <div class="contact-details">
                                 <h3>Location</h3>
                                 <p>Dehri on sone Bihar, India</p>
                             </div>
@@ -963,6 +1140,12 @@
                         </p>
                         
                         <p class="about-text">
+                            My approach combines technical expertise with creative problem-solving 
+                            to deliver exceptional digital experiences. I'm constantly learning 
+                            new technologies and techniques to stay at the forefront of web development.
+                        </p>
+                        
+                        <p class="about-text">
                             When I'm not coding, you can find me hiking in the mountains, reading 
                             science fiction, or experimenting with new cooking recipes.
                         </p>
@@ -1007,10 +1190,29 @@
         const contactForm = document.getElementById('contactForm');
         const dropdownItems = document.querySelectorAll('.dropdown-item');
         const downloadResume = document.getElementById('download-resume');
+        const notification = document.getElementById('notification');
+        const vantaBg = document.getElementById('vanta-bg');
 
-        // Initialize EmailJS - REPLACE WITH YOUR PUBLIC KEY
+        // Initialize Vanta.js 3D Background
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x8e2de2,
+            backgroundColor: 0x121212,
+            points: 12.00,
+            maxDistance: 22.00,
+            spacing: 18.00
+        });
+
+        // Initialize EmailJS with your public key
         (function() {
-            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your EmailJS public key
+            emailjs.init("6iAlud9M2EJXPhq5s"); // Replace with your EmailJS public key
         })();
 
         // Set current time in hidden input
@@ -1018,82 +1220,41 @@
             const timeField = document.getElementById('time');
             const now = new Date();
             timeField.value = now.toLocaleString();
+            
+            // Animate skill progress bars
+            animateSkillBars();
         });
 
-        // 3D Background Animation
-        function createBackgroundShapes() {
-            const background = document.getElementById('background-shapes');
-            const shapes = ['circle', 'triangle', 'square'];
-            const colors = ['#8e2de2', '#4a00e0', '#00c6fb'];
+        // Animate skill progress bars
+        function animateSkillBars() {
+            const skillItems = document.querySelectorAll('.skill-item');
             
-            // Clear existing shapes
-            background.innerHTML = '';
-            
-            for (let i = 0; i < 15; i++) {
-                const shape = document.createElement('div');
-                shape.classList.add('shape');
+            skillItems.forEach(item => {
+                const percent = item.getAttribute('data-percent');
+                const progressBar = item.querySelector('.progress-bar');
+                const percentText = item.querySelector('.progress-percent');
                 
-                // Random shape type
-                const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
-                shape.classList.add(shapeType);
+                // Set initial width to 0
+                progressBar.style.width = '0%';
                 
-                // Random size
-                const size = Math.random() * 100 + 50;
-                
-                // Random position
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                
-                // Random color
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                
-                // Random rotation
-                const rotation = Math.random() * 360;
-                
-                // Random animation
-                const animationName = `float-${i}`;
-                const duration = Math.random() * 20 + 20;
-                const delay = Math.random() * -20;
-                
-                // Apply styles
-                shape.style.width = `${size}px`;
-                shape.style.height = `${size}px`;
-                shape.style.left = `${posX}%`;
-                shape.style.top = `${posY}%`;
-                shape.style.transform = `rotate(${rotation}deg)`;
-                shape.style.animationName = animationName;
-                shape.style.animationDuration = `${duration}s`;
-                shape.style.animationDelay = `${delay}s`;
-                
-                if (shapeType === 'circle' || shapeType === 'square') {
-                    shape.style.backgroundColor = color;
-                } else if (shapeType === 'triangle') {
-                    shape.style.borderBottomColor = color;
-                }
-                
-                // Create keyframes for each shape
-                const style = document.createElement('style');
-                style.innerHTML = `
-                    @keyframes ${animationName} {
-                        0% {
-                            transform: translate(0, 0) rotate(0deg);
-                        }
-                        50% {
-                            transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 20 - 10}deg);
-                        }
-                        100% {
-                            transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(${Math.random() * 20 - 10}deg);
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                background.appendChild(shape);
-            }
+                // After a short delay, animate to the actual percentage
+                setTimeout(() => {
+                    progressBar.style.width = `${percent}%`;
+                    percentText.textContent = `${percent}%`;
+                }, 100);
+            });
         }
-        
-        // Initialize background shapes
-        createBackgroundShapes();
+
+        // Show notification
+        function showNotification(message, isSuccess = true) {
+            notification.textContent = message;
+            notification.style.background = isSuccess ? 'var(--primary-color)' : '#e74c3c';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
 
         // Back to Top Button
         window.addEventListener('scroll', () => {
@@ -1138,11 +1299,15 @@
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             submitButton.disabled = true;
             
-            // Send email using EmailJS - REPLACE WITH YOUR SERVICE AND TEMPLATE IDs
-            emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', contactForm)
+            // Update time field
+            const now = new Date();
+            document.getElementById('time').value = now.toLocaleString();
+            
+            // Send email using EmailJS
+            emailjs.sendForm('service_pph9gpl', 'template_orw4m8b', contactForm)
                 .then(function(response) {
                     // Show success message
-                    alert('Thank you for your message! I will get back to you soon.');
+                    showNotification('Thank you for your message! I will get back to you soon.');
                     contactForm.reset();
                     
                     // Reset button
@@ -1150,7 +1315,7 @@
                     submitButton.disabled = false;
                 }, function(error) {
                     // Show error message
-                    alert('Oops! Something went wrong. Please try again later or contact me directly at sushantdehri6@gmail.com');
+                    showNotification('Oops! Something went wrong. Please try again later.', false);
                     console.error('EmailJS Error:', error);
                     
                     // Reset button
@@ -1181,7 +1346,8 @@
 
         // Download resume confirmation
         downloadResume.addEventListener('click', (e) => {
-            console.log('Resume download initiated');
+            // This is just for demonstration - in a real scenario, the file would download
+            showNotification('Resume download started!');
         });
     </script>
 </body>

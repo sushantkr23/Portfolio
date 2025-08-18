@@ -1397,322 +1397,317 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    
     <script>
     // Portfolio Website JavaScript - Optimized for all devices
-    document.addEventListener('DOMContentLoaded', function() {
-        // =============================================
-        // Background Initialization
-        // =============================================
-        let vantaEffect = null;
-        let vantaInitialized = false;
-        const vantaContainer = document.getElementById('vanta-bg');
-        const fallbackBg = document.querySelector('.bg-fallback');
+document.addEventListener('DOMContentLoaded', function() {
+    // =============================================
+    // Background Initialization
+    // =============================================
+    let vantaEffect = null;
+    let vantaInitialized = false;
+    const vantaContainer = document.getElementById('vanta-bg');
+    const fallbackBg = document.querySelector('.bg-fallback');
 
-        // Check if mobile device
-        function isMobile() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Initialize Vanta.js background (modified to work on mobile)
+    function initVantaBackground() {
+        // Skip if already initialized
+        if (vantaInitialized) {
+            showFallbackBackground();
+            return;
         }
 
-        // Initialize Vanta.js background (with mobile detection)
-        function initVantaBackground() {
-            // Skip on mobile devices or if already initialized
-            if (isMobile() || window.innerWidth <= 768 || vantaInitialized) {
-                showFallbackBackground();
-                return;
-            }
-
-            // Check if required libraries are loaded
-            if (typeof THREE === 'undefined' || typeof VANTA === 'undefined') {
-                console.warn("Vanta.js dependencies not loaded - using fallback");
-                showFallbackBackground();
-                return;
-            }
-
-            try {
-                vantaEffect = VANTA.NET({
-                    el: "#vanta-bg",
-                    mouseControls: true,
-                    touchControls: true,
-                    gyroControls: false,
-                    minHeight: 200.00,
-                    minWidth: 200.00,
-                    scale: 1.00,
-                    color: 0x8e2de2,
-                    backgroundColor: 0x121212,
-                    points: 8.00,
-                    maxDistance: 16.00,
-                    spacing: 14.00
-                });
-
-                vantaContainer.style.display = 'block';
-                fallbackBg.style.display = 'none';
-                vantaInitialized = true;
-
-                // Handle window resize
-                window.addEventListener('resize', handleVantaResize);
-            } catch (error) {
-                console.error("Vanta.js initialization failed:", error);
-                showFallbackBackground();
-            }
+        // Check if required libraries are loaded
+        if (typeof THREE === 'undefined' || typeof VANTA === 'undefined') {
+            console.warn("Vanta.js dependencies not loaded - using fallback");
+            showFallbackBackground();
+            return;
         }
 
-        function handleVantaResize() {
-            if (vantaEffect && typeof vantaEffect.resize === 'function') {
-                vantaEffect.resize();
-            }
-        }
-
-        function showFallbackBackground() {
-            if (vantaContainer) vantaContainer.style.display = 'none';
-            if (fallbackBg) fallbackBg.style.display = 'block';
-        }
-
-        // =============================================
-        // Navigation and Scroll Behavior
-        // =============================================
-        const header = document.querySelector('header');
-        const backToTopBtn = document.getElementById('back-to-top');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const dropdownToggle = document.querySelector('.dropdown-toggle');
-        const dropdownMenu = document.querySelector('.dropdown-menu');
-        const dropdownItems = document.querySelectorAll('.dropdown-item');
-
-        // Mobile menu toggle
-        if (dropdownToggle && dropdownMenu) {
-            dropdownToggle.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-                }
+        try {
+            vantaEffect = VANTA.NET({
+                el: "#vanta-bg",
+                mouseControls: true,
+                touchControls: true, // Enabled for mobile
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                color: 0x8e2de2,
+                backgroundColor: 0x121212,
+                points: window.innerWidth <= 768 ? 6.00 : 8.00, // Fewer points on mobile
+                maxDistance: window.innerWidth <= 768 ? 14.00 : 16.00, // Smaller distance on mobile
+                spacing: window.innerWidth <= 768 ? 16.00 : 14.00 // More spacing on mobile
             });
 
-            // Close menu when clicking outside
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768 && 
-                    !dropdownToggle.contains(e.target) && 
-                    !dropdownMenu.contains(e.target)) {
-                    dropdownMenu.style.display = 'none';
-                }
-            });
+            vantaContainer.style.display = 'block';
+            fallbackBg.style.display = 'none';
+            vantaInitialized = true;
+
+            // Handle window resize
+            window.addEventListener('resize', handleVantaResize);
+        } catch (error) {
+            console.error("Vanta.js initialization failed:", error);
+            showFallbackBackground();
         }
+    }
 
-        // Smooth scrolling with fallback for older browsers
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    e.preventDefault();
-                    if ('scrollBehavior' in document.documentElement.style) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - (header?.offsetHeight || 80),
-                            behavior: 'smooth'
-                        });
-                    } else {
-                        window.scrollTo(0, targetElement.offsetTop - (header?.offsetHeight || 80));
-                    }
+    function handleVantaResize() {
+        if (vantaEffect && typeof vantaEffect.resize === 'function') {
+            vantaEffect.resize();
+        }
+    }
 
-                    // Update active nav items
-                    updateActiveNav(this);
-                    
-                    // Close mobile menu if open
-                    if (window.innerWidth <= 768 && dropdownMenu) {
-                        dropdownMenu.style.display = 'none';
-                    }
-                }
-            });
+    function showFallbackBackground() {
+        if (vantaContainer) vantaContainer.style.display = 'none';
+        if (fallbackBg) fallbackBg.style.display = 'block';
+    }
+
+    // =============================================
+    // Navigation and Scroll Behavior
+    // =============================================
+    const header = document.querySelector('header');
+    const backToTopBtn = document.getElementById('back-to-top');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+    // Mobile menu toggle
+    if (dropdownToggle && dropdownMenu) {
+        dropdownToggle.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+            }
         });
 
-        function updateActiveNav(activeElement) {
-            navLinks.forEach(link => link.classList.remove('active'));
-            dropdownItems.forEach(item => item.classList.remove('active'));
-            
-            if (activeElement.classList.contains('nav-link') || 
-                activeElement.classList.contains('dropdown-item')) {
-                activeElement.classList.add('active');
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && 
+                !dropdownToggle.contains(e.target) && 
+                !dropdownMenu.contains(e.target)) {
+                dropdownMenu.style.display = 'none';
             }
-        }
+        });
+    }
 
-        // Back to top button
-        if (backToTopBtn) {
-            window.addEventListener('scroll', function() {
-                backToTopBtn.classList.toggle('visible', window.scrollY > 300);
-            });
-
-            backToTopBtn.addEventListener('click', () => {
+    // Smooth scrolling with fallback for older browsers
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                e.preventDefault();
                 if ('scrollBehavior' in document.documentElement.style) {
                     window.scrollTo({
-                        top: 0,
+                        top: targetElement.offsetTop - (header?.offsetHeight || 80),
                         behavior: 'smooth'
                     });
                 } else {
-                    window.scrollTo(0, 0);
+                    window.scrollTo(0, targetElement.offsetTop - (header?.offsetHeight || 80));
                 }
-            });
-        }
 
-        // Highlight active section
-        function highlightActiveSection() {
-            const scrollPosition = window.scrollY + 100;
-            
-            document.querySelectorAll('section').forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
+                // Update active nav items
+                updateActiveNav(this);
                 
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    navLinks.forEach(link => {
-                        link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
-                    });
-                    
-                    dropdownItems.forEach(item => {
-                        item.classList.toggle('active', item.getAttribute('href') === `#${sectionId}`);
-                    });
+                // Close mobile menu if open
+                if (window.innerWidth <= 768 && dropdownMenu) {
+                    dropdownMenu.style.display = 'none';
                 }
-            });
-        }
-
-        // =============================================
-        // Skills Animation
-        // =============================================
-        function animateSkillBars() {
-            document.querySelectorAll('.skill-item').forEach(item => {
-                const percent = item.getAttribute('data-percent');
-                const progressBar = item.querySelector('.progress-bar');
-                const percentText = item.querySelector('.progress-percent');
-                
-                if (progressBar) {
-                    progressBar.style.width = '0%';
-                    setTimeout(() => {
-                        progressBar.style.width = `${percent}%`;
-                        if (percentText) percentText.textContent = `${percent}%`;
-                    }, 100);
-                }
-            });
-        }
-
-        // =============================================
-        // Contact Form Handling
-        // =============================================
-        const contactForm = document.getElementById('contactForm');
-        if (contactForm) {
-            // Initialize EmailJS
-            emailjs.init("6iAlud9M2EJXPhq5s");
-
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (!validateContactForm()) return;
-                
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalBtnText = submitBtn.innerHTML;
-                
-                // Update timestamp
-                document.getElementById('time').value = new Date().toLocaleString();
-                
-                // Show loading state
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-                submitBtn.disabled = true;
-                
-                // Send email
-                emailjs.sendForm('service_pph9gpl', 'template_orw4m8b', this)
-                    .then(() => {
-                        showNotification('Message sent successfully!');
-                        this.reset();
-                    })
-                    .catch(error => {
-                        console.error('Email failed:', error);
-                        showNotification('Failed to send message. Please try again.', false);
-                    })
-                    .finally(() => {
-                        submitBtn.innerHTML = originalBtnText;
-                        submitBtn.disabled = false;
-                    });
-            });
-        }
-
-        function validateContactForm() {
-            const name = document.getElementById('name')?.value.trim();
-            const email = document.getElementById('email')?.value.trim();
-            const subject = document.getElementById('subject')?.value.trim();
-            const message = document.getElementById('message')?.value.trim();
-            
-            if (!name || !email || !subject || !message) {
-                showNotification('Please fill in all fields', false);
-                return false;
             }
-            
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showNotification('Please enter a valid email address', false);
-                return false;
+        });
+    });
+
+    function updateActiveNav(activeElement) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        dropdownItems.forEach(item => item.classList.remove('active'));
+        
+        if (activeElement.classList.contains('nav-link') || 
+            activeElement.classList.contains('dropdown-item')) {
+            activeElement.classList.add('active');
+        }
+    }
+
+    // Back to top button
+    if (backToTopBtn) {
+        window.addEventListener('scroll', function() {
+            backToTopBtn.classList.toggle('visible', window.scrollY > 300);
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            if ('scrollBehavior' in document.documentElement.style) {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            } else {
+                window.scrollTo(0, 0);
             }
-            
-            return true;
-        }
+        });
+    }
 
-        // =============================================
-        // Notification System
-        // =============================================
-        function showNotification(message, isSuccess = true) {
-            const notification = document.getElementById('notification');
-            if (!notification) return;
+    // Highlight active section
+    function highlightActiveSection() {
+        const scrollPosition = window.scrollY + 100;
+        
+        document.querySelectorAll('section').forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
             
-            notification.textContent = message;
-            notification.style.background = isSuccess ? 'var(--primary-color)' : '#e74c3c';
-            notification.classList.add('show');
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
+                });
+                
+                dropdownItems.forEach(item => {
+                    item.classList.toggle('active', item.getAttribute('href') === `#${sectionId}`);
+                });
+            }
+        });
+    }
+
+    // =============================================
+    // Skills Animation
+    // =============================================
+    function animateSkillBars() {
+        document.querySelectorAll('.skill-item').forEach(item => {
+            const percent = item.getAttribute('data-percent');
+            const progressBar = item.querySelector('.progress-bar');
+            const percentText = item.querySelector('.progress-percent');
             
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
+            if (progressBar) {
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.width = `${percent}%`;
+                    if (percentText) percentText.textContent = `${percent}%`;
+                }, 100);
+            }
+        });
+    }
 
-        // =============================================
-        // Download Resume Button
-        // =============================================
-        const downloadResume = document.getElementById('download-resume');
-        if (downloadResume) {
-            downloadResume.addEventListener('click', (e) => {
-                showNotification('Resume download started!');
-            });
-        }
+    // =============================================
+    // Contact Form Handling
+    // =============================================
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        // Initialize EmailJS
+        emailjs.init("6iAlud9M2EJXPhq5s");
 
-        // =============================================
-        // Initialize Everything
-        // =============================================
-        function init() {
-            // Set current time in hidden field
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateContactForm()) return;
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Update timestamp
             document.getElementById('time').value = new Date().toLocaleString();
             
-            // Initialize background (will auto-disable on mobile)
-            initVantaBackground();
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
             
-            // Set timeout for background fallback
-            setTimeout(() => {
-                if (!vantaInitialized) {
-                    console.log("Vanta.js loading timeout - using fallback");
-                    showFallbackBackground();
-                }
-            }, 3000);
-            
-            // Animate skills
-            animateSkillBars();
-            
-            // Set up scroll events
-            window.addEventListener('scroll', highlightActiveSection);
-            
-            // Network status detection
-            window.addEventListener('offline', () => {
-                console.log("Offline - using fallback background");
-                showFallbackBackground();
-            });
-        }
+            // Send email
+            emailjs.sendForm('service_pph9gpl', 'template_orw4m8b', this)
+                .then(() => {
+                    showNotification('Message sent successfully!');
+                    this.reset();
+                })
+                .catch(error => {
+                    console.error('Email failed:', error);
+                    showNotification('Failed to send message. Please try again.', false);
+                })
+                .finally(() => {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+        });
+    }
 
-        // Start the application
-        init();
-    });
-    </script>
+    function validateContactForm() {
+        const name = document.getElementById('name')?.value.trim();
+        const email = document.getElementById('email')?.value.trim();
+        const subject = document.getElementById('subject')?.value.trim();
+        const message = document.getElementById('message')?.value.trim();
+        
+        if (!name || !email || !subject || !message) {
+            showNotification('Please fill in all fields', false);
+            return false;
+        }
+        
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showNotification('Please enter a valid email address', false);
+            return false;
+        }
+        
+        return true;
+    }
+
+    // =============================================
+    // Notification System
+    // =============================================
+    function showNotification(message, isSuccess = true) {
+        const notification = document.getElementById('notification');
+        if (!notification) return;
+        
+        notification.textContent = message;
+        notification.style.background = isSuccess ? 'var(--primary-color)' : '#e74c3c';
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // =============================================
+    // Download Resume Button
+    // =============================================
+    const downloadResume = document.getElementById('download-resume');
+    if (downloadResume) {
+        downloadResume.addEventListener('click', (e) => {
+            showNotification('Resume download started!');
+        });
+    }
+
+    // =============================================
+    // Initialize Everything
+    // =============================================
+    function init() {
+        // Set current time in hidden field
+        document.getElementById('time').value = new Date().toLocaleString();
+        
+        // Initialize background (now works on mobile too)
+        initVantaBackground();
+        
+        // Set timeout for background fallback
+        setTimeout(() => {
+            if (!vantaInitialized) {
+                console.log("Vanta.js loading timeout - using fallback");
+                showFallbackBackground();
+            }
+        }, 3000);
+        
+        // Animate skills
+        animateSkillBars();
+        
+        // Set up scroll events
+        window.addEventListener('scroll', highlightActiveSection);
+        
+        // Network status detection
+        window.addEventListener('offline', () => {
+            console.log("Offline - using fallback background");
+            showFallbackBackground();
+        });
+    }
+
+    // Start the application
+    init();
+});
+
+</script>
 </body>
 </html>
